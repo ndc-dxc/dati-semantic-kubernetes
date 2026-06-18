@@ -45,12 +45,14 @@ spec:
               value: "true"
             - name: KC_LOG_LEVEL
               value: INFO
-            - name: KEYCLOAK_ADMIN
+            # Nomi env nuovi (KC_BOOTSTRAP_ADMIN_*): KEYCLOAK_ADMIN/_PASSWORD sono
+            # deprecati da Keycloak 26. Le chiavi del Secret restano invariate.
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: keycloak-admin-dev
                   key: KEYCLOAK_ADMIN
-            - name: KEYCLOAK_ADMIN_PASSWORD
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: keycloak-admin-dev
