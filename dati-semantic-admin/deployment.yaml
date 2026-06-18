@@ -1,0 +1,89 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dati-semantic-admin
+  name: dati-semantic-admin
+  namespace: ndc-dev
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: dati-semantic-admin
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dati-semantic-admin
+      name: dati-semantic-admin
+    spec:
+      containers:
+        - name: dati-semantic-admin
+          # Tag pinnato a mano in attesa del secret cross-repo che abilita
+          # l'update automatico del tag via update-config.yaml.
+          image: ghcr.io/teamdigitale/dati-semantic-admin:1a70cf8caeba1fa34c93f855d1e7afef62cfc69f
+          imagePullPolicy: Always
+          env:
+            # Spring e' dietro route OpenShift edge (TLS sul router, HTTP nel pod):
+            # senza questo il redirect_uri OAuth2 verrebbe costruito in http:// e
+            # Keycloak lo rifiuterebbe (registrato come https).
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: framework
+            - name: SERVER_SERVLET_SESSION_COOKIE_SECURE
+              value: "true"
+            # issuer-uri = URL PUBBLICO: il claim 'iss' del token emesso da
+            # Keycloak (KC_HOSTNAME pubblico) deve combaciare per la validazione.
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI
+              value: https://keycloak-ndc-dev.apps.cloudpub.testedev.istat.it/realms/ndc
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID
+              value: ndc-admin-bff-client
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: admin-oauth-dev
+                  key: client-secret
+            # Backend NDC: chiamata service-to-service interna al namespace.
+            - name: NDC_BACKEND_URL
+              value: http://dati-semantic-backend:8080
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 768Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
