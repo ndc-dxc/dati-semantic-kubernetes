@@ -22,6 +22,8 @@ spec:
       labels:
         app: dati-semantic-backend
       name: dati-semantic-backend
+      annotations:
+        wordpress-bootstrap-trigger: bootstrap-20260624-548-dea84a6
     spec:
       containers:
         - env:
@@ -94,7 +96,7 @@ spec:
               value: "true"
             - name: JAVA_MAIL_DEBUG
               value: "true"
-          image: ghcr.io/teamdigitale/dati-semantic-backend:20260601-545-60d462b
+          image: ghcr.io/teamdigitale/dati-semantic-backend:20260624-548-dea84a6
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
