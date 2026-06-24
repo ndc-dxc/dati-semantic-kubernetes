@@ -106,6 +106,20 @@ data:
             "pkce.code.challenge.method": "S256",
             "post.logout.redirect.uris": "https://admin-ndc-dev.apps.cloudpub.testedev.istat.it/*"
           },
+          "protocolMappers": [
+            {
+              "name": "ndc-backend-audience",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-mapper",
+              "consentRequired": false,
+              "config": {
+                "included.custom.audience": "ndc-backend",
+                "id.token.claim": "false",
+                "access.token.claim": "true",
+                "introspection.token.claim": "true"
+              }
+            }
+          ],
           "defaultClientScopes": [
             "profile",
             "email",

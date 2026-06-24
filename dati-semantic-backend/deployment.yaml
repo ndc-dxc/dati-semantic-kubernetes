@@ -77,6 +77,8 @@ spec:
                   name: mysql-dev
             - name: LOGGING_LEVEL_IT_GOV_INNOVAZIONE_NDC
               value: debug
+            - name: OAUTH2_ISSUER_URI
+              value: https://keycloak-ndc-dev.apps.cloudpub.testedev.istat.it/realms/ndc
             - name: ALERTER_SMTP_SERVER
               value: smtp.istat.it
             - name: ALERTER_SMTP_PORT
