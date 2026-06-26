@@ -1,5 +1,5 @@
 kind: HorizontalPodAutoscaler
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 metadata:
   name: autoscaling-dati-semantic-admin
   namespace: ndc-test
@@ -10,10 +10,3 @@ spec:
     apiVersion: apps.openshift.io/v1
   minReplicas: 1
   maxReplicas: 2
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 80
