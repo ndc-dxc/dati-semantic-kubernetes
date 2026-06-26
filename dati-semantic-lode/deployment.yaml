@@ -29,7 +29,7 @@ spec:
               value: "/lode"
             - name: WEBVOWL_URL
               value: "/webvowl/#iri="
-          image: ghcr.io/teamdigitale/dati-semantic-lode:20230210-21-f8d6926
+          image: ghcr.io/teamdigitale/dati-semantic-lode:20260414-42-d55c02c
           imagePullPolicy: Always
           name: dati-semantic-lode
           ports:
